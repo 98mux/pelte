@@ -1,79 +1,70 @@
-/// <reference path="./types.d.ts" />
+import { preprocess as sveltePreprocess } from "svelte/compiler";
+import { preprocessScript } from "./preprocess.js";
+import { createFilter } from "vite";
 
-import typescript from "svelte-preprocess";
-import { walk } from "estree-walker";
-import { parse as parseSvelte } from "svelte/compiler";
-import MagicString from "magic-string";
-import { isIdentifier, isReactiveIdentifier } from "./utils.js";
-import { handleScript } from "./script.js";
+let vitePreprocessed = false;
 
 /**
- * Preprocessor for Bref syntax, using `$` as prefix for reactive variables.
- * It avoids the need to call `$state` and `$derived` runes every time.
+ * Preprocessor for Brefer syntax, using variable prefixes to handle reactivity.
+ * It avoids the need to call `$state`, `$derived` or `$effect` runes every time.
  *
- * @param { Brefer.PreprocessorOptions } [options = {}]
+ * If you also want to preprocess .svelte.js files, use `brefer` instead.
+ *
  * @returns { import("svelte/compiler").PreprocessorGroup }
  */
-const preprocessor = (options) => ({
-	name: "brefer",
-	async markup({ content, filename }) {
-		/** @type {Brefer.Context} */
-		const ctx = {
-			prefix: options?.prefix || "$",
-			REACTIVE_VALUES: [],
-			DERIVED_VALUES: [],
-			TO_RENAME_ONLY: [],
-		};
-
-		const source = new MagicString(content);
-
-		const ast = /** @type { Brefer.Root }} */ (
-			await parseSvelte(content, { filename })
-		);
-
-		if (!ast.instance) {
-			return {
-				code: content,
-				dependencies: [],
-			};
-		}
-
-		const scriptContent = /** @type {Brefer.Program} */ (ast.instance.content);
-		let scriptString = content.slice(scriptContent.start, scriptContent.end);
-
-		const newScript = await handleScript(scriptString, ctx);
-		source.update(scriptContent.start, scriptContent.end, newScript);
-
-		const html = ast.html;
-
-		walk(html, {
-			enter(node) {
-				if (isIdentifier(node)) {
-					if (isReactiveIdentifier(node, ctx) && ctx.prefix === "$") {
-						source.update(
-							node.start,
-							node.end,
-							node.name.replace(ctx.prefix, "r$")
-						);
-					}
+export function breferPreprocess() {
+	return vitePreprocessed
+		? { name: "brefer-preprocessor" }
+		: {
+				name: "brefer-preprocessor",
+				async script({ content, filename }) {
+					return preprocessScript(content, filename);
 				}
-			},
-		});
-
-		return {
-			code: source.toString(),
-			map: source.generateMap({ hires: true }),
-			filename,
-		};
-	},
-});
+			};
+}
 
 /**
- * Preprocessor for Bref syntax, using `$` as prefix for reactive variables.
- * It avoids the need to call `$state` and `$derived` runes every time.
+ * Brefer vite plugin for svelte. It allows to preprocess .svelte.js files as well as .svelte files.
+ *
+ * Prefer the use of `breferPreprocess` if you want to preprocess .svelte files only.
  *
  * @export
- * @param { Brefer.PreprocessorOptions } [options = {}] - The options for the preprocessor
- * @returns { import("svelte/compiler").PreprocessorGroup[] } - The Svelte preprocessor
+ * @param {import("./public.js").BreferConfig} config
+ * @returns {import("vite").Plugin}
  */
-export default (options) => [typescript(), preprocessor(options)];
+export function brefer(config = {}) {
+	if (!vitePreprocessed) vitePreprocessed = true;
+
+	const shouldProcess = createFilter(config.include, config.exclude);
+
+	return {
+		name: "vite-plugin-svelte-brefer",
+		enforce: "pre",
+		async transform(code, id) {
+			if (!shouldProcess(id)) {
+				return;
+			}
+
+			if (id.endsWith(".svelte")) {
+				const preprocessed = await sveltePreprocess(code, breferPreprocess(), {
+					filename: id
+				});
+
+				return {
+					code: preprocessed.code,
+					map: /** @type {string} */ (preprocessed.map),
+					id
+				};
+			}
+			if (id.endsWith(".svelte.js") || id.endsWith(".svelte.ts")) {
+				const preprocessed = preprocessScript(code, id);
+
+				return {
+					code: preprocessed.code,
+					map: preprocessed.map,
+					id
+				};
+			}
+		}
+	};
+}
