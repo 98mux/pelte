@@ -1,9 +1,9 @@
 {
-	"name": "brefer",
+	"name": "pelte",
 	"description": "Svelte 5 preprocessor to shorten runes syntax.",
-	"author": "KilDesu",
+	"author": "KilDesu & 98mux",
 	"license": "MIT",
-	"version": "2.0.0-alpha.6",
+	"version": "0.0.3",
 	"type": "module",
 	"engines": {
 		"node": "^18.0.0 || >=20",
@@ -25,12 +25,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/KilDesu/brefer.git"
+		"url": "git+https://github.com/98mux/pelte.git"
 	},
 	"bugs": {
-		"url": "https://github.com/KilDesu/brefer/issues"
+		"url": "https://github.com/98mux/pelte/issues"
 	},
-	"homepage": "https://github.com/KilDesu/brefer#readme",
+	"homepage": "https://github.com/98mux/pelte#readme",
 	"keywords": [
 		"brefer",
 		"preprocessor",
