@@ -1,3 +1,3 @@
 <script>
-	let r$count = $state();
+  let count = $state();
 </script>

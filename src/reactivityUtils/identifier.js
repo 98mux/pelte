@@ -43,18 +43,18 @@ export function handleIdentifier(identifier, initialization, ctx) {
 
 	const dependencies = getReactiveDependencies(initialization, ctx.prefix);
 
-	if (dependencies.length) {
-		ctx.DERIVED_VALUES.push({
-			name: identifier.name,
-			dependencies,
-			start: initialization.start,
-			end: initialization.end,
-		});
-	} else {
+	// if (dependencies.length) {
+	// 	ctx.DERIVED_VALUES.push({
+	// 		name: identifier.name,
+	// 		dependencies,
+	// 		start: initialization.start,
+	// 		end: initialization.end,
+	// 	});
+	// } else {
 		ctx.REACTIVE_VALUES.push({
 			name: identifier.name,
 			start: initialization.start,
 			end: initialization.end,
 		});
-	}
+	// }
 }

@@ -24,4 +24,15 @@ describe("State", () => {
 
 		expect(got).toStrictEqual(expected);
 	});
+
+	test("Reassign", async () => {
+		const { got, expected } = await getCodes("reassign", "state");
+
+		expect(got).toStrictEqual(expected);
+	});
+	test("onlyTopLevel", async () => {
+		const { got, expected } = await getCodes("onlyTopLevel", "state");
+
+		expect(got).toStrictEqual(expected);
+	});
 });

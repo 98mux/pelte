@@ -1,7 +1,7 @@
 <script>
-	let $count = 0;
+  let count = 0;
 
-	$: () => {
-		console.log($count);
-	};
+  $effect(() => {
+    console.log(count);
+  });
 </script>

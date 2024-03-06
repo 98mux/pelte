@@ -9,7 +9,7 @@ import { walk as walk_estree } from "estree-walker";
  * @return {node is Brefer.Identifier} - Wether the node is a reactive variable or not
  */
 export function isReactive(node, prefix) {
-	return node.type === "Identifier" && node.name.startsWith(prefix);
+	return node.type === "Identifier";// && node.name.startsWith(prefix);
 }
 
 /**

@@ -1,13 +1,8 @@
 <script>
-	import { untrack } from "svelte";
+  let count = $state(0);
+  let double = $derived(count * 2);
 
-	let r$count = $state(0);
-	let r$double = $derived(r$count * 2);
-
-	$effect(() => {
-		console.log(
-			r$count,
-			untrack(() => r$double)
-		);
-	});
+  $effect(() => {
+    console.log(count, double);
+  });
 </script>

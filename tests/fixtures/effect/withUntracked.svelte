@@ -1,9 +1,8 @@
 <script>
-	let $count = 0;
-	let $double = $count * 2;
+  let count = 0;
+  let double = $derived(count * 2);
 
-	$: $double,
-		() => {
-			console.log($count, $double);
-		};
+  $effect(() => {
+    console.log(count, double);
+  });
 </script>

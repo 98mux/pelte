@@ -1,3 +1,3 @@
 <script>
-	let $count;
+  let count;
 </script>

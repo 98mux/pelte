@@ -1,15 +1,15 @@
 <script>
-	// @ts-nocheck
-	let notReactive = true;
+  // @ts-nocheck
+  let notReactive = $state(true);
 
-	let r$foo = $state("bar");
+  let foo = $state("bar");
 
-	let r$count = $state(0);
+  let count = $state(0);
 
-	let r$object = $state({
-		foo: "bar",
-		baz: "qux",
-	});
+  let object = $state({
+    foo: "bar",
+    baz: "qux",
+  });
 
-	let r$array = $state([1, 2, 3, 4, 5]);
+  let array = $state([1, 2, 3, 4, 5]);
 </script>

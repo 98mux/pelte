@@ -1,9 +1,9 @@
 <script>
-	// @ts-nocheck
-	function double(count) {
-		return count * 2;
-	}
+  // @ts-nocheck
+  function double2(count) {
+    return count * 2;
+  }
 
-	let $count = 1;
-	let $double = double($count);
+  let count = 1;
+  let double = $derived(double2(count));
 </script>
